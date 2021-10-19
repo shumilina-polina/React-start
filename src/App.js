@@ -3,7 +3,6 @@ import PostList from "./components/PostList";
 import "./styles/App.css";
 import MyButton from "./components/UI/button/MyButton";
 import MyInput from "./components/UI/input/MyInput";
-
 // Импортируем react в каждый файл, где создаем компонент
 
 function App() {
@@ -12,17 +11,17 @@ function App() {
     { id: 2, title: "JavaScript 2", body: "Description" },
     { id: 3, title: "JavaScript 3", body: "Description" },
   ]);
-  // 0 - начальное значение/состояние
   // useState возвращает массив из 2х эл-тов
   // 1й - начальное зн-е (присвоится в posts), 2й- ф-я, изменяющая состояние (присвоится в setPosts)
 
-  const [title, setTitle] = useState("");
-  const bodyInputRef = useRef();
+  const [post, setPost] = useState({ title: "", body: "" });
+  // const bodyInputRef = useRef();
   // bodyInputRef.current- сам dom-эл-т
-
   // useRef - получаем доступ к DOM-эл-ту и забираем value через пропс ref
   const addNewPost = (e) => {
-    e.preventDefault(); //предотвратить перезагрузку старицы при клике на submit кнопку (избыточное действие)
+    e.preventDefault(); //предотвратить перезагрузку страницы при клике на submit кнопку (избыточное действие)
+    setPosts([...posts, { ...post, id: Date.now() }]);
+    setPost({ title: "", body: "" });
   };
 
   return (
@@ -30,16 +29,19 @@ function App() {
       <form>
         {/* Управляемый компонент */}
         <MyInput
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          value={post.title}
+          onChange={(e) => setPost({ ...post, title: e.target.value })} //изменяем только нужное для нас поле
           type="text"
           placeholder="Название поста"
         />
         {/* Неуправляемый\Неконтролируемый компонент */}
-        <MyInput ref={bodyInputRef} type="text" placeholder="Описание поста" />
-        <MyButton onClick={addNewPost} disabled>
-          Создать пост
-        </MyButton>
+        <MyInput
+          value={post.body}
+          onChange={(e) => setPost({ ...post, body: e.target.value })}
+          type="text"
+          placeholder="Описание поста"
+        />
+        <MyButton onClick={addNewPost}>Создать пост</MyButton>
       </form>
       <PostList posts={posts} title="Посты про JS" />
     </div>
