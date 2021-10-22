@@ -1,9 +1,8 @@
 import React, { useState, useRef } from "react";
+// Импортируем react в каждый файл, где создаем компонент
 import PostList from "./components/PostList";
 import "./styles/App.css";
-import MyButton from "./components/UI/button/MyButton";
-import MyInput from "./components/UI/input/MyInput";
-// Импортируем react в каждый файл, где создаем компонент
+import PostForm from "./components/PostForm";
 
 function App() {
   const [posts, setPosts] = useState([
@@ -14,36 +13,36 @@ function App() {
   // useState возвращает массив из 2х эл-тов
   // 1й - начальное зн-е (присвоится в posts), 2й- ф-я, изменяющая состояние (присвоится в setPosts)
 
-  const [post, setPost] = useState({ title: "", body: "" });
   // const bodyInputRef = useRef();
   // bodyInputRef.current- сам dom-эл-т
   // useRef - получаем доступ к DOM-эл-ту и забираем value через пропс ref
-  const addNewPost = (e) => {
-    e.preventDefault(); //предотвратить перезагрузку страницы при клике на submit кнопку (избыточное действие)
-    setPosts([...posts, { ...post, id: Date.now() }]);
-    setPost({ title: "", body: "" });
+
+  const createPost = (newPost) => {
+    setPosts([...posts, newPost]);
+  };
+
+  const removePost = (post) => {
+    setPosts(posts.filter((p) => p.id !== post.id));
   };
 
   return (
     <div className="App">
-      <form>
-        {/* Управляемый компонент */}
-        <MyInput
-          value={post.title}
-          onChange={(e) => setPost({ ...post, title: e.target.value })} //изменяем только нужное для нас поле
-          type="text"
-          placeholder="Название поста"
-        />
-        {/* Неуправляемый\Неконтролируемый компонент */}
-        <MyInput
-          value={post.body}
-          onChange={(e) => setPost({ ...post, body: e.target.value })}
-          type="text"
-          placeholder="Описание поста"
-        />
-        <MyButton onClick={addNewPost}>Создать пост</MyButton>
-      </form>
-      <PostList posts={posts} title="Посты про JS" />
+      <PostForm create={createPost} />
+      {/* create - props с callback-функцией*/}
+
+      <hr style={{margin:'15px 0'}}/>
+      <div>
+        <select>
+          <option value='value1'>По названию</option>
+          <option value='value2'>По описанию</option>
+        </select>
+      </div>
+
+      {posts.length ? (
+        <PostList remove={removePost} posts={posts} title="Посты про JS" />
+      ) : (
+        <h1 style={{ textAlign: "center" }}>Посты не найдены</h1>
+      )}
     </div>
   );
 }
